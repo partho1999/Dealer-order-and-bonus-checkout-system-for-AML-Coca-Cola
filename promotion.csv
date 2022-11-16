@@ -1,0 +1,6 @@
+p.code,p_name,UOM,oder_qty,bonus_qty,status,sdp,region,territory,remarks,efficitive_data,Entry_date
+p001,coca-cola-200ml(RGB),CASE,12,2,0,db-001,Khulna,khulna base-1,good,1/11/2022,10/11/2022
+p002,sprite-200ml(RGB) ,CASE,12,1,1,db-002,Barisal,gournodi,average,1/11/2022,10/11/2022
+p003,coca-cola-250ml(PET),CASE,10,1,0,db-003,Cumilla,nohakhali,happy,1/11/2022,10/11/2022
+p004,sprit-250(PET),CASE,12,1,1,db-004,Chittagong,ctg base-1,not bad,1/11/2022,10/11/2022
+p003,coca-cola-250ml(PET),CASE,15,1,1,db-005,Khulna,jessore,good,1/11/2022,10/11/2022

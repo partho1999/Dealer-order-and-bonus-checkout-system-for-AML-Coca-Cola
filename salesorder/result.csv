@@ -1,0 +1,5 @@
+,id,product,p_name,UOM,tp,bonus_qty,order_qty,balance
+0,1,p001,Coca-cola-200ml(RGB),CASE,200,2,12,2400
+1,2,p002,sprite-200ml(RGB),CASE,200,0,0,0
+2,3,p003,coca-cola-250ml(PET),CASE,250,0,0,0
+3,4,p004,sprite-250ml(PET),CASE,250,0,0,0

@@ -1,0 +1,5 @@
+product,p_name,UOM,tp
+p001,coca-cola-200ml(RGB),CASE,200
+p002,sprite-200ml(RGB) ,CASE,200
+p003,coca-cola-250ml(PET),CASE,250
+p004,sprit-250(PET),CASE,250

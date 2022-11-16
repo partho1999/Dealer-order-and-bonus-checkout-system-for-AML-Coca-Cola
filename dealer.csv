@@ -1,0 +1,5 @@
+code,name,cr_limit,balance,territory
+db-001,partho_enterprise,800000,550000,Khulna
+db-002,shafie_traders,1000000,6000000,Barisal
+db-003,pranto_enterprise,800000,550000,Cumilla
+db-004,sofi_traders,1000000,6000000,Chittagong
