@@ -4,6 +4,7 @@ import pandas as pd
 import json
 from django.views.decorators.csrf import csrf_exempt
 from .models import Dealer,Product,Promotion
+from django.http import JsonResponse
 
 # Create your views here.
 def index(request):
@@ -300,38 +301,45 @@ def ordercal(request):
 
     return render(request, 'sales/index.html', context=context)
 
-
+@csrf_exempt
 def test(request):
 
-    if request.method == 'POST':
-        data = request.POST.dict()
-        data.pop('csrfmiddlewaretoken', None)
-        print('data:',data)
+    # if request.method == 'POST':
+    #     data = request.POST.dict()
+    #     data.pop('csrfmiddlewaretoken', None)
+    #     print('data:',data)
 
-        data ={x:y for x,y in data.items() if y!='0'}
+    #     data ={x:y for x,y in data.items() if y!='0'}
 
-        id_lst =[]
-        value_lst =[]
+    #     id_lst =[]
+    #     value_lst =[]
 
-        for i in data.items():
-            id = i[0].replace('item_', '')
-            id_lst.append(id)
-            value = i[1]
-            value_lst.append(value)
-
-        
-        #getting input from forms
-        # request.method == "POST"
+    #     for i in data.items():
+    #         id = i[0].replace('item_', '')
+    #         id_lst.append(id)
+    #         value = i[1]
+    #         value_lst.append(value)
+    ######################################################################################################################
+      
+    #getting input from forms
+    if request.method == "POST":
         # id=request.POST.get('id','')
         # type=request.POST.get('type','')
-        # order_input=request.POST.get('value','')
-        # #product=Product.objects.get(id=id)
+        data=request.POST.dict()
+        #product=Product.objects.get(id=id)
         # print(id)
         # print(type)
-        # print(order_input)
-        #print(id)
+        print(data)
+        id_lst =[]
+        id =int(data['id'])
+        id_lst.append(id)
+
+        value_lst =[]
+        val=int(data['value'])
+        value_lst.append(val)
+       
         
-        ##################################################product info#######################################################
+        # ##################################################product info#######################################################
         Product_table= Product.objects.all().values()
         #print('Product-db-table:',Product_table)
         df_p = pd.DataFrame(list(Product_table))
@@ -384,28 +392,31 @@ def test(request):
         df_p_1.loc[df_p_1['id'].isin(id_lst), "balance"] = tp*value_lst
         df_p_1 = df_p_1.fillna(0)
         print(df_p_1)
-
+        print(df_p_1)
         json_records_p = df_p_1.reset_index().to_json(orient ='records')
         data_p = []
         data_p = json.loads(json_records_p)
-        # print(data_p)
-    else:     
-        Product_table= Product.objects.all().values()
-        #print('Product-db-table:',Product_table)
-        df_p = pd.DataFrame(list(Product_table))
-        print(df_p)
+        print(data_p)
+        return JsonResponse({'data_p':data_p})
+        
+        
+    # else:     
+    Product_table= Product.objects.all().values()
+    #print('Product-db-table:',Product_table)
+    df_p = pd.DataFrame(list(Product_table))
+    # print(df_p)
 
-        df_p_1= df_p.copy()
+    df_p_1= df_p.copy()
 
-        df_p_1['order_qty'] = 0
-        df_p_1['bonus_qty'] = 0
-        df_p_1['balance'] = 0   
+    df_p_1['order_qty'] = 0
+    df_p_1['bonus_qty'] = 0
+    df_p_1['balance'] = 0   
 
 
-        print("don't get any post value")
-        json_records_p = df_p_1.reset_index().to_json(orient ='records')
-        data_p = []
-        data_p = json.loads(json_records_p)
+    # print("don't get any post value")
+    json_records_p = df_p_1.reset_index().to_json(orient ='records')
+    data_p = []
+    data_p = json.loads(json_records_p)
     
 
 
@@ -419,6 +430,124 @@ def test(request):
 
     return render(request, 'sales/test.html', context=context)
 
+@csrf_exempt
+def test_1(request):
+
+    if request.method == 'POST':
+        data = request.POST.dict()
+        data.pop('csrfmiddlewaretoken', None)
+        print('data:',data)
+
+    #     data ={x:y for x,y in data.items() if y!='0'}
+
+    #     id_lst =[]
+    #     value_lst =[]
+
+    #     for i in data.items():
+    #         id = i[0].replace('item_', '')
+    #         id_lst.append(id)
+    #         value = i[1]
+    #         value_lst.append(value)
+    ######################################################################################################################
+      
+    #getting input from forms
+    # if request.method == "POST":
+    #     # id=request.POST.get('id','')
+    #     # type=request.POST.get('type','')
+    #     data=request.POST.dict()
+    #     #product=Product.objects.get(id=id)
+    #     print(id)
+    #     print(type)
+    #     print(data)
+       
+        
+    #     ##################################################product info#######################################################
+    #     Product_table= Product.objects.all().values()
+    #     #print('Product-db-table:',Product_table)
+    #     df_p = pd.DataFrame(list(Product_table))
+    #     print(df_p)
+
+    #     df_p_1= df_p.copy()
+
+    #     df_p_1['order_qty'] = 0
+    #     df_p_1['bonus_qty'] = 1
+    #     df_p_1['balance'] = 123
+
+
+    
+        
+        # ##################################################promotion info#####################################################
+        # Promotion_table= Promotion.objects.all().values()
+        # #print('Promotion-db-table:',Promotion_table)
+        # df = pd.DataFrame(list(Promotion_table))
+        
+        # # print("----Promotion table----")
+        # # print(df)
+        # dealer_name = "db-001"
+        # df_1=df[df['sdp']==dealer_name]
+
+        # id_lst = [int(x) for x in id_lst]
+        # df_p_2 = df_p_1[df_p_1['id'].isin(id_lst)]
+
+
+        # product_code=list(df_p_2['product'])
+        # product_code
+
+
+        # dff = df_1[df_1['p_code'].isin(product_code)]
+        # dff
+
+        # order_qty = [int(x) for x in list(dff['order_qty'])]
+        # bonus_qty = [int(x) for x in list(dff['bonus_qty'])]
+        # pro_code =  [x for x in list(dff['p_code'])]
+        
+
+        # value_lst = [int(x) for x in value_lst]
+        # df_p_2 = df_p_1[df_p_1['id'].isin(id_lst)]
+        # tp=df_p_2['tp']
+
+        # bnv = [int(num1*num2) for num1, num2 in zip(bonus_qty,value_lst)]
+        # divition = [int(n1/n2) for n1,n2 in zip(bnv, order_qty)]
+
+        # df_p_1.loc[df_p_1['id'].isin(id_lst), "order_qty"] =value_lst
+        # df_p_1.loc[df_p_1['product'].isin(pro_code), "bonus_qty"] = list(pd.Series(divition))
+        # df_p_1.loc[df_p_1['id'].isin(id_lst), "balance"] = tp*value_lst
+        # df_p_1 = df_p_1.fillna(0)
+        # print(df_p_1)
+        # print(df_p_1)
+        # json_records_p = df_p_1.reset_index().to_json(orient ='records')
+        # data_p = []
+        # data_p = json.loads(json_records_p)
+        # print(data_p)
+        # return JsonResponse({'data_p':data_p})
+        
+        
+    # else:     
+    Product_table= Product.objects.all().values()
+    #print('Product-db-table:',Product_table)
+    df_p = pd.DataFrame(list(Product_table))
+    # print(df_p)
+
+    df_p_1= df_p.copy()
+
+    df_p_1['order_qty'] = 0
+    df_p_1['bonus_qty'] = 0
+    df_p_1['balance'] = 0   
+
+
+    print("don't get any post value")
+    json_records_p = df_p_1.reset_index().to_json(orient ='records')
+    data_p = []
+    data_p = json.loads(json_records_p)
+    
+
+
+    context = {
+        'd': data_p, 
+        
+    }
+    
+    return render(request, 'sales/test_1.html', context=context)
 
 def savetoserver(request):
 

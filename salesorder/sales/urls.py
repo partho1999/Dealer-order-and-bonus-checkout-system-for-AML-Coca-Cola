@@ -21,5 +21,6 @@ urlpatterns = [
     path("", views.index, name="salesHome"),
     path("ordercal/", views.ordercal, name="ordercal"),
     path("test/", views.test, name="test"),
+    path("test_1/", views.test_1, name="test_1"),
     path("savetoserver/", views.savetoserver, name="savetoserver"),
 ]
