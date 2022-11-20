@@ -75,10 +75,10 @@
         <div class="col-md-12">
             <div class="row">
                 <div class="card-body">
-                    <form action="/sales/test_1/" onsubmit="return false" method="POST">
+                    <form action="/sales/test_1/" id="my_form" method="POST">
                         {% csrf_token %}
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                            <table class="table">
+                            <table id= "myTable"class="table">
                                 <thead>
                                 <tr>
                                     <th scope="col">P.Code</th>
@@ -141,7 +141,7 @@
  
 
 
-    {% comment %} <script>
+    <script>
         $(document).ready(function() { 
             $("#my_form").submit(function(event){
                 event.preventDefault();
@@ -151,11 +151,7 @@
                     type: "POST",
                     url:"http://127.0.0.1:8000/sales/test_1/"
                     data: {
-                        for(i=0; i<x; i++){
-
-
-
-                          }
+                        
                     },
                      
                     success: function(data)
@@ -175,7 +171,7 @@
                  
             });  
         });
-    </script> {% endcomment %}
+    </script>
 
      
     

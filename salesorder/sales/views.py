@@ -323,23 +323,25 @@ def test(request):
       
     #getting input from forms
     if request.method == "POST":
-        # id=request.POST.get('id','')
-        # type=request.POST.get('type','')
-        data=request.POST.dict()
+        id=request.POST.get('id','')
+        #type=request.POST.get('type','')
+        data=request.POST.get('value','')
         #product=Product.objects.get(id=id)
-        # print(id)
-        # print(type)
+        print(id)
+        #print(type)
         print(data)
         id_lst =[]
-        id =int(data['id'])
+        id =int(id)
         id_lst.append(id)
+        print(id_lst)
 
         value_lst =[]
-        val=int(data['value'])
+        val=int(data)
         value_lst.append(val)
+        print(value_lst)
        
         
-        # ##################################################product info#######################################################
+        ##################################################product info#######################################################
         Product_table= Product.objects.all().values()
         #print('Product-db-table:',Product_table)
         df_p = pd.DataFrame(list(Product_table))
