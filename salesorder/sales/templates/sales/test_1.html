@@ -75,7 +75,7 @@
         <div class="col-md-12">
             <div class="row">
                 <div class="card-body">
-                    <form action="/sales/test_1/" id="my_form" method="POST">
+                    <form  id="my_form">
                         {% csrf_token %}
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
                             <table id= "myTable"class="table">
@@ -101,7 +101,7 @@
                                                 <td>{{i.tp}}</td>
                                                 {% comment %} <td class="editable" data-id={{ i.id }} data-type="order_qty">{{ i.order_qty }}</td> {% endcomment %}
                                                 {% comment %} <td><input type="number" value="{{i.order_qty}}" name="item_{{i.id}}" ondblclick="this.form.submit()"></td> {% endcomment %}
-                                                <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number"  name="item_{{i.id}}" style="width: 80px;" onchange="this.form.submit()"></td>
+                                                <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number" class="number"  name="item_{{i.id}}" style="width: 80px;" onchange="ajaxpost()"></td>
                                                 <td>{{i.bonus_qty}}</td>
                                                 <td>{{i.balance}}</td>
                                             
@@ -139,9 +139,31 @@
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
  
-
-
+    
     <script>
+        function ajaxpost() {
+            // (A) GET FORM DATA
+            var form = document.getElementById("my_form");
+            var data = new FormData(form);
+            console.log(data)
+            // (B) AJAX
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/sales/test_1/");
+            // What to do when server responds
+            xhr.onload = function () { console.log(this.response); };
+            xhr.send(data);
+            
+            
+            // (C) PREVENT HTML FORM SUBMIT
+            return false;
+
+        }
+        
+    </script>
+
+   
+
+    {% comment %} <script>
         $(document).ready(function() { 
             $("#my_form").submit(function(event){
                 event.preventDefault();
@@ -171,7 +193,7 @@
                  
             });  
         });
-    </script>
+    </script> {% endcomment %}
 
      
     
