@@ -75,7 +75,7 @@
         <div class="col-md-12">
             <div class="row">
                 <div class="card-body">
-                    <form  id="my_form">
+                    <form  method="POST" id="form">
                         {% csrf_token %}
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
                             <table id= "myTable"class="table">
@@ -90,7 +90,7 @@
                                     <th scope="col">Net Total</th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id= "tbody">
                                 
                                     {% if d %}  
                                         {% for i in d %}
@@ -101,7 +101,7 @@
                                                 <td>{{i.tp}}</td>
                                                 {% comment %} <td class="editable" data-id={{ i.id }} data-type="order_qty">{{ i.order_qty }}</td> {% endcomment %}
                                                 {% comment %} <td><input type="number" value="{{i.order_qty}}" name="item_{{i.id}}" ondblclick="this.form.submit()"></td> {% endcomment %}
-                                                <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number" class="number"  name="item_{{i.id}}" style="width: 80px;" onchange="ajaxpost()"></td>
+                                                <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number" class="number"  name="{{i.id}}" ></td>
                                                 <td>{{i.bonus_qty}}</td>
                                                 <td>{{i.balance}}</td>
                                             
@@ -139,8 +139,26 @@
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script
+        src="https://code.jquery.com/jquery-3.5.0.min.js"
+        integrity="sha256-xNzN2a4ltkB44Mc/Jz3pT4iU1cmeR0FkXs4pru/JxaQ="
+        crossorigin="anonymous">
     
-    <script>
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous">
+    </script>
+    
+    
+
+    {% comment %} <script>
         function ajaxpost() {
             // (A) GET FORM DATA
             var form = document.getElementById("my_form");
@@ -156,12 +174,83 @@
             
             // (C) PREVENT HTML FORM SUBMIT
             return false;
+            
+            
 
+        }    
+    </script> {% endcomment %}
+
+    <script>
+        const form = document.getElementById('form');
+        form.addEventListener("change", submitHandler);
+        output = "";
+        function submitHandler(e) {
+            e.preventDefault();
+            $.ajax({
+                type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                url         : '{% url 'test_1' %}', // the url where we want to POST
+                data        : $('#form').serialize(), // our form data
+                //dataType    : 'json', // what type of data do we expect back from the server
+                success     : successFunction
+            });
         }
-        
-    </script>
+    
+        function successFunction(data) {
+            x = data.data_p;
+            //console.log(x);
+            //console.log(x.length);
 
-   
+            //function DeleteRows() {
+                //var table = document.getElementById("myTable");
+                //var RowCount = table.rows.length;
+                //for (var i = rowCount - 1; i > 0; i--) {
+                    //table.deleteRow(i);
+                //}
+             
+            for (i=0; i<x.length; i++){
+                
+                output +="<tr><td>" + x[i].product +
+                        "</td><td>" + x[i].p_name + 
+                        "</td><td>" + x[i].UOM + 
+                        "</td><td>" + x[i].tp + 
+                        "</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ x[i].id +" value="+x[i].order_qty+">" +  
+                        "</td><td>" + x[i].bonus_qty + 
+                        "</td><td>" + x[i].balance +
+                        "</td></tr>";
+                
+                
+                        
+                
+            } 
+            $("#tbody").html(output);
+            
+            //document.getElementById("myTable").deleteRow(1);
+            //var table = document.getElementById("myTable");
+            //var tbodyRowCount = table.tBodies[0].rows.length;
+            //console.log(tbodyRowCount)
+            
+            //let a = x.length;
+            //let b = 1;
+            //let c = a - b;
+            //console.log(c)
+
+            //if (tbodyRowCount>x.length) {
+                //  block of code to be executed if the condition is true
+                //for (var input = 1; input <=x.length; input++) {
+                    //console.log(input);
+                    //document.getElementById("myTable").deleteRow(input);
+                    
+                  // }
+                //document.getElementById("myTable").deleteRow(i);
+               
+                
+              //}
+
+
+            
+            
+        }
+    </script>
 
     {% comment %} <script>
         $(document).ready(function() { 

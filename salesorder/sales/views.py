@@ -330,15 +330,15 @@ def test(request):
         print(id)
         #print(type)
         print(data)
-        id_lst =[]
-        # id =int(id)
-        id_lst.append(id)
-        print(id_lst)
+    #     id_lst =[]
+    #     # id =int(id)
+    #     id_lst.append(id)
+    #     print(id_lst)
 
-        value_lst =[]
-        val=int(data)
-        value_lst.append(val)
-        print(value_lst)
+    #     value_lst =[]
+    #     val=int(data)
+    #     value_lst.append(val)
+    #     print(value_lst)
 
         # id_lst =[1]
         # value_lst=[12]
@@ -478,7 +478,7 @@ def test_1(request):
         value_lst =[]
 
         for i in data.items():
-            id = i[0].replace('item_', '')
+            id = int(i[0])
             id_lst.append(id)
             value = i[1]
             value_lst.append(value)
@@ -486,13 +486,13 @@ def test_1(request):
         
         #getting input from forms
         # if request.method == "POST":
-        #     # id=request.POST.get('id','')
-        #     # type=request.POST.get('type','')
-        #     data=request.POST.dict()
+        #     i=request.POST.get('id','')
+        #     type=request.POST.get('type','')
+        #     da=request.POST.get('value','')
         #     #product=Product.objects.get(id=id)
-        #     print(id)
+        #     print(i)
         #     print(type)
-        #     print(data)
+        #     print(da)
        
         
         ##################################################product info#######################################################
@@ -504,8 +504,8 @@ def test_1(request):
         df_p_1= df_p.copy()
 
         df_p_1['order_qty'] = 0
-        df_p_1['bonus_qty'] = 1
-        df_p_1['balance'] = 123
+        df_p_1['bonus_qty'] = 0
+        df_p_1['balance'] = 0
 
 
     
@@ -552,8 +552,14 @@ def test_1(request):
         json_records_p = df_p_1.reset_index().to_json(orient ='records')
         data_p = []
         data_p = json.loads(json_records_p)
-        print(data_p)
+        
         return JsonResponse({'data_p':data_p})
+        # context = {
+        # 'd': data_p, 
+        
+        # }
+        
+        # return render(request, 'sales/test_1.html', context=context)
         
         
     # else:     
