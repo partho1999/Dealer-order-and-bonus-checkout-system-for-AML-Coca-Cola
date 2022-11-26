@@ -3,8 +3,9 @@ from django.http import HttpResponse
 import pandas as pd
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import Dealer,Product,Promotion
+from .models import Dealer,Product,Promotion,order
 from django.http import JsonResponse
+from sqlalchemy import create_engine
 
 # Create your views here.
 def index(request):
@@ -548,7 +549,10 @@ def test_1(request):
         df_p_1.loc[df_p_1['id'].isin(id_lst), "balance"] = tp*value_lst
         df_p_1 = df_p_1.fillna(0)
         print(df_p_1)
-        print(df_p_1)
+
+        engine = create_engine('sqlite:///db.sqlite3')
+
+        df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
         json_records_p = df_p_1.reset_index().to_json(orient ='records')
         data_p = []
         data_p = json.loads(json_records_p)
