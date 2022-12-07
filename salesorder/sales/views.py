@@ -3,8 +3,11 @@ from django.http import HttpResponse
 import pandas as pd
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import Dealer,Product,Promotion
+from .models import Dealer,Product,Promotion,order
 from django.http import JsonResponse
+from django.template import loader
+from sqlalchemy import create_engine
+
 
 # Create your views here.
 def index(request):
@@ -119,7 +122,7 @@ def ordercal(request):
     #getting input from forms
     global df_p_1
     global data_df
-    
+    dealer_name = 'db-001'
     if request.method == 'POST':
         data = request.POST.dict()
         data.pop('csrfmiddlewaretoken', None)
@@ -301,8 +304,8 @@ def ordercal(request):
 
     return render(request, 'sales/index.html', context=context)
 
-@csrf_exempt
-def test(request):
+# @csrf_exempt
+# def test(request):
 
     # if request.method == 'POST':
     #     data = request.POST.dict()
@@ -465,9 +468,47 @@ def test(request):
     return render(request, 'sales/test.html', context=context)
 
 @csrf_exempt
+def test(request):
+    # else:     
+    Product_table= Product.objects.all().values()
+    #print('Product-db-table:',Product_table)
+    df_p = pd.DataFrame(list(Product_table))
+    # print(df_p)
+
+    df_p_1= df_p.copy()
+
+    df_p_1['order_qty'] = 0
+    df_p_1['bonus_qty'] = 0
+    df_p_1['balance'] = 0   
+
+
+    # print("don't get any post value")
+    # json_records_p = df_p_1.reset_index().to_json(orient ='records')
+    # data_p = []
+    # data_p = json.loads(json_records_p)
+    engine = create_engine('sqlite:///db.sqlite3')
+
+    df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
+
+    d_order = order.objects.all().values()
+    print(d_order)
+    
+
+
+    context = {
+        'd': d_order, 
+        
+    }
+    
+    return render(request, 'sales/test_1.html', context=context)
+    
+
+
+@csrf_exempt
 def test_1(request):
 
     if request.method == 'POST':
+        print("i'm if") 
         data = request.POST.dict()
         data.pop('csrfmiddlewaretoken', None)
         print('data:',data)
@@ -548,46 +589,64 @@ def test_1(request):
         df_p_1.loc[df_p_1['id'].isin(id_lst), "balance"] = tp*value_lst
         df_p_1 = df_p_1.fillna(0)
         print(df_p_1)
-        print(df_p_1)
-        json_records_p = df_p_1.reset_index().to_json(orient ='records')
-        data_p = []
-        data_p = json.loads(json_records_p)
+        engine = create_engine('sqlite:///db.sqlite3')
+
+        df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
+
+        d_order = order.objects.all().values()
+        print("save value:",d_order)
+
+        # json_records_p = df_p_1.reset_index().to_json(orient ='records')
+        # data_p = []
+        # data_p = json.loads(json_records_p)
+        data_p = list(d_order)
         
-        return JsonResponse({'data_p':data_p})
-        # context = {
-        # 'd': data_p, 
         
-        # }
-        
-        # return render(request, 'sales/test_1.html', context=context)
-        
-        
-    # else:     
-    Product_table= Product.objects.all().values()
-    #print('Product-db-table:',Product_table)
-    df_p = pd.DataFrame(list(Product_table))
-    # print(df_p)
-
-    df_p_1= df_p.copy()
-
-    df_p_1['order_qty'] = 0
-    df_p_1['bonus_qty'] = 0
-    df_p_1['balance'] = 0   
-
-
-    print("don't get any post value")
-    json_records_p = df_p_1.reset_index().to_json(orient ='records')
-    data_p = []
-    data_p = json.loads(json_records_p)
-    
-
-
-    context = {
+        context = {
         'd': data_p, 
         
-    }
+        }
+        #template = loader.get_template('sales/test_1.html')
+        return JsonResponse({'data_p': data_p})
+        #render(request, 'sales/test_1.html', {'data_p':data_p})
+        #return HttpResponse(template,render(context, request))
+        #return None
+        
+    else:    
+        print("i'm else") 
+        Product_table= Product.objects.all().values()
+        #print('Product-db-table:',Product_table)
+        df_p = pd.DataFrame(list(Product_table))
+        # print(df_p)
+
+        df_p_1= df_p.copy()
+
+        df_p_1['order_qty'] = 0
+        df_p_1['bonus_qty'] = 0
+        df_p_1['balance'] = 0   
+
+
+        # print("don't get any post value")
+        # json_records_p = df_p_1.reset_index().to_json(orient ='records')
+        # data_p = []
+        # data_p = json.loads(json_records_p)
+        engine = create_engine('sqlite:///db.sqlite3')
+
+        df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
+
+        d_order = order.objects.all().values()
+        print(d_order)
+        
+
+
+        context = {
+            'd': d_order, 
+            
+        }
+        
+        return render(request, 'sales/test_1.html', context=context)
+        
     
-    return render(request, 'sales/test_1.html', context=context)
 
 def savetoserver(request):
 

@@ -74,7 +74,7 @@
         <hr>
         <div class="col-md-12">
             <div class="row">
-                <div class="card-body">
+                <div class="card-body" id="mydiv">
                     <form  method="POST" id="form">
                         {% csrf_token %}
                         <div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -90,27 +90,33 @@
                                     <th scope="col">Net Total</th>
                                 </tr>
                                 </thead>
-                                <tbody id= "tbody">
-                                
-                                    {% if d %}  
-                                        {% for i in d %}
-                                            <tr>
-                                                <td>{{i.product}}</td>
-                                                <td>{{i.p_name}}</td>
-                                                <td>{{i.UOM}}</td>
-                                                <td>{{i.tp}}</td>
-                                                {% comment %} <td class="editable" data-id={{ i.id }} data-type="order_qty">{{ i.order_qty }}</td> {% endcomment %}
-                                                {% comment %} <td><input type="number" value="{{i.order_qty}}" name="item_{{i.id}}" ondblclick="this.form.submit()"></td> {% endcomment %}
-                                                <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number" class="number"  name="{{i.id}}" ></td>
-                                                <td>{{i.bonus_qty}}</td>
-                                                <td>{{i.balance}}</td>
-                                            
-                                            </tr>
-                                        {% endfor %}
-                                    {% endif %}
+                                {% if d %} 
+                                    <tbody id= "tbody">
                                     
-                            
-                                </tbody>
+                                        
+                                            {% for i in d %}
+                                                <tr>
+                                                    <td>{{i.product}}</td>
+                                                    <td>{{i.p_name}}</td>
+                                                    <td>{{i.UOM}}</td>
+                                                    <td>{{i.tp}}</td>
+                                                    {% comment %} <td class="editable" data-id={{ i.id }} data-type="order_qty">{{ i.order_qty }}</td> {% endcomment %}
+                                                    {% comment %} <td><input type="number" value="{{i.order_qty}}" name="item_{{i.id}}" ondblclick="this.form.submit()" onchange="ajaxpost()"></td> {% endcomment %}
+                                                    <td style="width: 85px;"><input type="number" value="{{i.order_qty}}" id="number" class="number"  name="{{i.id}}" ></td>
+                                                    <td>{{i.bonus_qty}}</td>
+                                                    <td>{{i.balance}}</td>
+                                                
+                                                </tr>
+                                            {% endfor %}
+                                        
+                                        
+                                
+                                    </tbody>
+                                {% else %}
+                                    <tbody id= "myTable">
+
+                                    </tbody>
+                                {% endif %}
                             </table>
                         </div>
                        
@@ -161,7 +167,7 @@
     {% comment %} <script>
         function ajaxpost() {
             // (A) GET FORM DATA
-            var form = document.getElementById("my_form");
+            var form = document.getElementById("form");
             var data = new FormData(form);
             console.log(data)
             // (B) AJAX
@@ -177,10 +183,13 @@
             
             
 
-        }    
-    </script> {% endcomment %}
+        }  
+        //var o=JSON.parse(data_p);
+        //console.log(o)  
+        
+    </script>  {% endcomment %}
 
-    <script>
+ <script>
         const form = document.getElementById('form');
         form.addEventListener("change", submitHandler);
         output = "";
@@ -197,17 +206,19 @@
     
         function successFunction(data) {
             x = data.data_p;
-            //console.log(x);
+            console.log(x);
             //console.log(x.length);
 
-            //function DeleteRows() {
-                //var table = document.getElementById("myTable");
-                //var RowCount = table.rows.length;
-                //for (var i = rowCount - 1; i > 0; i--) {
-                    //table.deleteRow(i);
-                //}
-             
+            
+            
+           
+            
+                     
+                    
+            
             for (i=0; i<x.length; i++){
+                //$("#mydiv").load(location.href + " #mydiv");
+                
                 
                 output +="<tr><td>" + x[i].product +
                         "</td><td>" + x[i].p_name + 
@@ -218,17 +229,51 @@
                         "</td><td>" + x[i].balance +
                         "</td></tr>";
                 
-                
+                console.log(i)
                         
                 
             } 
             $("#tbody").html(output);
             
-            //document.getElementById("myTable").deleteRow(1);
-            //var table = document.getElementById("myTable");
-            //var tbodyRowCount = table.tBodies[0].rows.length;
-            //console.log(tbodyRowCount)
+            var table = document.getElementById("myTable");
+            var tbodyRowCount = table.tBodies[0].rows.length;
+            console.log(tbodyRowCount)
             
+            if (tbodyRowCount> x.length){
+                console.log("its more then x length")
+                
+                var table = document.getElementById("myTable");
+                var RowCount = table.rows.length;
+                for (var i = RowCount - 1; i > 0; i--) {
+                    table.deleteRow(i);
+                }
+                for (i=0; i<x.length; i++){
+                    //$("#mydiv").load(location.href + " #mydiv");
+                    
+                    
+                    output +="<tr><td>" + x[i].product +
+                            "</td><td>" + x[i].p_name + 
+                            "</td><td>" + x[i].UOM + 
+                            "</td><td>" + x[i].tp + 
+                            "</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ x[i].id +" value="+x[i].order_qty+">" +  
+                            "</td><td>" + x[i].bonus_qty + 
+                            "</td><td>" + x[i].balance +
+                            "</td></tr>";
+                    
+                    console.log(i)
+                            
+                    
+                } 
+                $("#tbody").html(output);
+            
+                
+                
+
+            }
+            
+            
+            
+
             //let a = x.length;
             //let b = 1;
             //let c = a - b;
@@ -250,7 +295,62 @@
             
             
         }
-    </script>
+        
+    </script>  
+
+    {% comment %} <script>
+        const form = document.getElementById('form');
+        form.addEventListener("change", submitHandler);
+        output = "";
+        function submitHandler(e) {
+            e.preventDefault();
+            $.ajax({
+                type        : 'POST', // define the type of HTTP verb we want to use (POST for our form)
+                url         : 'http://127.0.0.1:8000/sales/test_1/', // the url where we want to POST
+                data        : $('#form').serialize(), // our form data
+                //dataType    : 'json', // what type of data do we expect back from the server
+                success     : successFunction
+            });
+        }
+    
+        function successFunction(data) {
+            console.log("ok")
+            var myArray =[]
+            $.ajax({
+                method:'GET',
+                url:'http://127.0.0.1:8000/api/order/',
+                success:function(response){
+                    myArray = response
+                    buildTable(myArray)
+                    console.log(myArray)
+
+                }
+            })
+
+            function buildTable(data){
+                var table = document.getElementById('myTable')
+                for(var i=0; i<data.length; i++){
+                    var output ="<tr><td>" + data[i].product +
+                        "</td><td>" + data[i].p_name + 
+                        "</td><td>" + data[i].UOM + 
+                        "</td><td>" + data[i].tp + 
+                        "</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ data[i].id +" value="+data[i].order_qty+">" +  
+                        "</td><td>" + data[i].bonus_qty + 
+                        "</td><td>" + data[i].balance +
+                        "</td></tr>"
+                    
+                    table.innerHTML = output
+                }
+                
+                
+
+            }
+
+            
+            
+        }
+        
+    </script>    {% endcomment %}
 
     {% comment %} <script>
         $(document).ready(function() { 

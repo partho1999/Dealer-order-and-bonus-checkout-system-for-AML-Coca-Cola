@@ -43,3 +43,16 @@ class Promotion(models.Model):
     def __str__(self):
         return self.sdp
 
+class order(models.Model):
+    id = models.AutoField(primary_key=True)
+    product =models.CharField(max_length=30)
+    p_name =models.CharField(max_length=100)
+    UOM = models.CharField(max_length=10)
+    tp = models.IntegerField()
+    order_qty = models.IntegerField()
+    bonus_qty = models.IntegerField()
+    balance = models.IntegerField()
+
+    def __str__(self):
+        return self.p_name
+
