@@ -112,10 +112,7 @@
                                         
                                 
                                     </tbody>
-                                {% else %}
-                                    <tbody id= "myTable">
-
-                                    </tbody>
+                               
                                 {% endif %}
                             </table>
                         </div>
@@ -189,7 +186,7 @@
         
     </script>  {% endcomment %}
 
- <script>
+    {% comment %} <script>
         const form = document.getElementById('form');
         form.addEventListener("change", submitHandler);
         output = "";
@@ -235,41 +232,41 @@
             } 
             $("#tbody").html(output);
             
-            var table = document.getElementById("myTable");
-            var tbodyRowCount = table.tBodies[0].rows.length;
-            console.log(tbodyRowCount)
+            //var table = document.getElementById("myTable");
+            //var tbodyRowCount = table.tBodies[0].rows.length;
+            //console.log(tbodyRowCount)
             
-            if (tbodyRowCount> x.length){
-                console.log("its more then x length")
+           // if (tbodyRowCount> x.length){
+                //console.log("its more then x length")
                 
-                var table = document.getElementById("myTable");
-                var RowCount = table.rows.length;
-                for (var i = RowCount - 1; i > 0; i--) {
-                    table.deleteRow(i);
-                }
-                for (i=0; i<x.length; i++){
+                //var table = document.getElementById("myTable");
+                //var RowCount = table.rows.length;
+                //for (var i = RowCount - 1; i > 0; i--) {
+                    //table.deleteRow(i);
+               // }
+               // for (i=0; i<x.length; i++){
                     //$("#mydiv").load(location.href + " #mydiv");
                     
                     
-                    output +="<tr><td>" + x[i].product +
-                            "</td><td>" + x[i].p_name + 
-                            "</td><td>" + x[i].UOM + 
-                            "</td><td>" + x[i].tp + 
-                            "</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ x[i].id +" value="+x[i].order_qty+">" +  
-                            "</td><td>" + x[i].bonus_qty + 
-                            "</td><td>" + x[i].balance +
-                            "</td></tr>";
+                   // output +="<tr><td>" + x[i].product +
+                        //    "</td><td>" + x[i].p_name + 
+                         //   "</td><td>" + x[i].UOM + 
+                            //"</td><td>" + x[i].tp + 
+                            //"</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ x[i].id +" value="+x[i].order_qty+">" +  
+                            //"</td><td>" + x[i].bonus_qty + 
+                            //"</td><td>" + x[i].balance +
+                            //"</td></tr>";
                     
-                    console.log(i)
+                    //console.log(i)
                             
                     
-                } 
-                $("#tbody").html(output);
+                //} 
+                //$("#tbody").html(output);
             
                 
                 
 
-            }
+            //}
             
             
             
@@ -296,9 +293,9 @@
             
         }
         
-    </script>  
+    </script>   {% endcomment %}
 
-    {% comment %} <script>
+    <script>
         const form = document.getElementById('form');
         form.addEventListener("change", submitHandler);
         output = "";
@@ -329,6 +326,14 @@
 
             function buildTable(data){
                 var table = document.getElementById('myTable')
+                var tdbody = document.getElementById('tbody')
+                
+
+                //var new_tbody = document.createElement('tbody');
+                //populate_with_new_rows(new_tbody);
+                //old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
+                tdbody.innerHTML = "";
+
                 for(var i=0; i<data.length; i++){
                     var output ="<tr><td>" + data[i].product +
                         "</td><td>" + data[i].p_name + 
@@ -339,7 +344,7 @@
                         "</td><td>" + data[i].balance +
                         "</td></tr>"
                     
-                    table.innerHTML = output
+                    tdbody.innerHTML += output
                 }
                 
                 
@@ -350,7 +355,7 @@
             
         }
         
-    </script>    {% endcomment %}
+    </script>
 
     {% comment %} <script>
         $(document).ready(function() { 
