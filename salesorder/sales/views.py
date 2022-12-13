@@ -212,13 +212,31 @@ def ordercal(request):
 
         df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
 
+        sum_balance = df_p_1['balance'].sum()
+
+        pro_amount = df_p_1['tp'] * df_p_1['bonus_qty']
+        pro_amount = pro_amount.sum()
+        net_total = sum_balance + pro_amount
+
+        data = {
+        "sum_balance": [sum_balance],
+        "pro_amount": [pro_amount],
+        "net_total": [net_total]
+        }
+
+        #load data into a DataFrame object:
+        df_total_amount = pd.DataFrame(data)
+
+        print(df_total_amount)
+
         d_order = order.objects.all().values()
         print("save value:",d_order)
 
-        # json_records_p = df_p_1.reset_index().to_json(orient ='records')
-        # data_p = []
-        # data_p = json.loads(json_records_p)
+        json_records_p = df_total_amount.reset_index().to_json(orient ='records')
+        data_Q = []
+        data_Q = json.loads(json_records_p)
         data_p = list(d_order)
+        # df_total_amount = list(df_total_amount)
         
         
         context = {
@@ -226,7 +244,7 @@ def ordercal(request):
         
         }
         #template = loader.get_template('sales/test_1.html')
-        return JsonResponse({'data_p': data_p})
+        return JsonResponse({'data_p': data_p,'data_Q':data_Q})
 
 
 # @csrf_exempt

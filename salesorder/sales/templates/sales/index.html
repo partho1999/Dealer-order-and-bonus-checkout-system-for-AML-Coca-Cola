@@ -222,7 +222,7 @@
 
         </div>
 
-        <div class="col-md-5">
+        <div class="col-md-5" id="total">
             
             <h4 class="alert-heading">Total Amount={{sum_balance}}</h4>
             <h4 class="alert-heading">Promotion Amount={{pro_amount}}</h4>
@@ -274,7 +274,12 @@
         }
     
         function successFunction(data) {
+            var myArray1 =[]
             console.log("ok")
+            x = data.data_Q;
+            myArray1 = x
+            buildTotal(myArray1)
+            console.log(myArray1)
             var myArray =[]
             $.ajax({
                 method:'GET',
@@ -313,7 +318,20 @@
                 
 
             }
+            function buildTotal(data){
+                var total = document.getElementById('total')
 
+                total.innerHTML = "";
+                for(var i=0; i<data.length; i++){
+                    var output ="<h4 class='alert-heading'>Total Amount="+data[i].sum_balance+
+                                "</h4><h4 class='alert-heading'>Promotion Amount="+data[i].pro_amount+
+                                "</h4><h4 class='alert-heading'>Net Amount="+data[i].net_total+
+                                "</h4><a class='btn btn-primary' href='/sales/savetoserver/' role='button' style='width:100%; margin-bottom: 8px;'>Order</a>"
+                                
+                    total.innerHTML += output            
+                }
+        
+            }
             
             
         }
