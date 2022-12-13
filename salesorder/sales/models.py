@@ -56,3 +56,13 @@ class order(models.Model):
     def __str__(self):
         return self.p_name
 
+
+
+
+class dealer_code(models.Model):
+    
+    id = models.AutoField(primary_key=True)
+    dealer_name =models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.dealer_name

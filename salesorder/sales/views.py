@@ -3,7 +3,7 @@ from django.http import HttpResponse
 import pandas as pd
 import json
 from django.views.decorators.csrf import csrf_exempt
-from .models import Dealer,Product,Promotion,order
+from .models import Dealer,Product,Promotion,order,dealer_code
 from django.http import JsonResponse
 from django.template import loader
 from sqlalchemy import create_engine
@@ -12,7 +12,6 @@ from sqlalchemy import create_engine
 # Create your views here.
 def index(request):
     global dealer_name
-    
     #getting input from forms
     
     request.method == "POST"
@@ -23,6 +22,21 @@ def index(request):
     #getting input from dropdown
     dealer_name = request.POST.get('p')
     print("dealer_name:",dealer_name)
+    print("dealer_type:",type(dealer_name))
+    data = {
+    "dealer_name": [dealer_name],
+    
+    }
+
+    #load data into a DataFrame object:
+    df_dealer_name = pd.DataFrame(data)
+
+    print(df_dealer_name)
+    df_dealer_name.to_csv("dealar_name.csv")
+
+    #engine = create_engine('sqlite:///db.sqlite3')
+
+    #df_dealer_name.to_sql(dealer_code._meta.db_table, if_exists='replace', con =engine, index= False)
 
     Dealer_table= Dealer.objects.all().values()
     #print('Dealer_table-db-table:',Dealer_table)
@@ -119,69 +133,12 @@ def index(request):
 
 
 def ordercal(request):
-    #getting input from forms
-    global df_p_1
-    global data_df
-    dealer_name = 'db-001'
+    
     if request.method == 'POST':
+        print("i'm if") 
         data = request.POST.dict()
         data.pop('csrfmiddlewaretoken', None)
         print('data:',data)
-
-
-        Dealer_table= Dealer.objects.all().values()
-        #print('Dealer_table-db-table:',Dealer_table)
-        df_d = pd.DataFrame(list(Dealer_table))
-        # print("----Dealer table----")
-        # print(df_d)
-
-
-        json_records_d = df_d.reset_index().to_json(orient ='records')
-        data_dt = []
-        data_dt = json.loads(json_records_d)
-        #print('data_dt:',data_dt)
-
-
-        code = 'None'
-        cr_limit = 0
-        balance = 0
-        territory = 'None'
-
-        if dealer_name is not None:
-            df_d=df_d[df_d['code']==dealer_name]
-            df_d = df_d.reset_index()
-
-            code= df_d['code'][0]
-            cr_limit = df_d['cr_limit'][0]
-            balance = df_d['balance'][0]
-            territory = df_d['territory'][0]
-
-        ##################################################promotion info#####################################################
-        Promotion_table= Promotion.objects.all().values()
-        #print('Promotion-db-table:',Promotion_table)
-        df = pd.DataFrame(list(Promotion_table))
-        
-        # print("----Promotion table----")
-        # print(df)
-        
-
-        
-        if dealer_name is not None:
-            df_1=df[df['sdp']==dealer_name]
-            df_1=df_1.reset_index()
-            
-
-            json_records_d = df_1.reset_index().to_json(orient ='records')
-            data_df = []
-            data_df = json.loads(json_records_d)
-        else:
-
-            json_records_d = df.reset_index().to_json(orient ='records')
-            data_df = []
-            data_df = json.loads(json_records_d)
-
-     ##################################################product info#######################################################
-    
 
         data ={x:y for x,y in data.items() if y!='0'}
 
@@ -189,11 +146,13 @@ def ordercal(request):
         value_lst =[]
 
         for i in data.items():
-            id = i[0].replace('item_', '')
+            id = int(i[0])
             id_lst.append(id)
             value = i[1]
             value_lst.append(value)
-
+        #####################################################################################################################
+        
+       
         
         ##################################################product info#######################################################
         Product_table= Product.objects.all().values()
@@ -217,7 +176,8 @@ def ordercal(request):
         
         # print("----Promotion table----")
         # print(df)
-        # dealer_name = dealer_name 
+        df_dealer_name = pd.read_csv('../salesorder/dealar_name.csv')
+        dealer_name = list(df_dealer_name ['dealer_name'])[0]
         df_1=df[df['sdp']==dealer_name]
 
         id_lst = [int(x) for x in id_lst]
@@ -225,11 +185,11 @@ def ordercal(request):
 
 
         product_code=list(df_p_2['product'])
-        # product_code
+        product_code
 
 
         dff = df_1[df_1['p_code'].isin(product_code)]
-        # dff
+        dff
 
         order_qty = [int(x) for x in list(dff['order_qty'])]
         bonus_qty = [int(x) for x in list(dff['bonus_qty'])]
@@ -248,61 +208,26 @@ def ordercal(request):
         df_p_1.loc[df_p_1['id'].isin(id_lst), "balance"] = tp*value_lst
         df_p_1 = df_p_1.fillna(0)
         print(df_p_1)
+        engine = create_engine('sqlite:///db.sqlite3')
 
-        sum_balance = df_p_1['balance'].sum()
+        df_p_1.to_sql(order._meta.db_table, if_exists='replace', con =engine, index= False)
 
-        pro_amount = df_p_1['tp'] * df_p_1['bonus_qty']
-        pro_amount = pro_amount.sum()
-        net_total = sum_balance + pro_amount
+        d_order = order.objects.all().values()
+        print("save value:",d_order)
 
-        json_records_p = df_p_1.reset_index().to_json(orient ='records')
-        data_p = []
-        data_p = json.loads(json_records_p)
-        # print(data_p)
-    else:     
-        Product_table= Product.objects.all().values()
-        #print('Product-db-table:',Product_table)
-        df_p = pd.DataFrame(list(Product_table))
-        print(df_p)
-
-        df_p_1= df_p.copy()
-
-        df_p_1['order_qty'] = 0
-        df_p_1['bonus_qty'] = 0
-        df_p_1['balance'] = 0   
-
-        sum_balance = df_p_1['balance'].sum()
-        pro_amount = df_p_1['tp'] * df_p_1['bonus_qty']
-        pro_amount = pro_amount.sum()
-        net_total = sum_balance + pro_amount
-
-        print("don't get any post value")
-        json_records_p = df_p_1.reset_index().to_json(orient ='records')
-        data_p = []
-        data_p = json.loads(json_records_p)
-    
-
-
-    # context = {
-    #     'd': data_p, 
+        # json_records_p = df_p_1.reset_index().to_json(orient ='records')
+        # data_p = []
+        # data_p = json.loads(json_records_p)
+        data_p = list(d_order)
         
-    # }
-
-    context = {
-        'net_total': net_total,
-        'pro_amount': pro_amount,
-        'sum_balance':sum_balance,
+        
+        context = {
         'd': data_p, 
-        'f':data_df,
-        'g':data_dt,
-        'code':code,
-        'cr_limit':cr_limit,
-        'balance':balance,
-        'territory':territory
-    }
-    
+        
+        }
+        #template = loader.get_template('sales/test_1.html')
+        return JsonResponse({'data_p': data_p})
 
-    return render(request, 'sales/index.html', context=context)
 
 # @csrf_exempt
 # def test(request):
