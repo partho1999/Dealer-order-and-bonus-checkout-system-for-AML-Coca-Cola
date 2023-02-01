@@ -592,10 +592,25 @@ def test_1(request):
     
 
 def savetoserver(request):
+    print('new dealer-name:',dealer_name)
+    d_order = order.objects.all().values()
+    print(d_order)
 
-    print('save func:',df_p_1)
+    df_order = pd.DataFrame(list(d_order))
 
-    df_p_1.to_sql('order_table_of'+dealer_name, index_label='id' , if_exists='replace')
+    engine = create_engine('sqlite:///db.sqlite3')
+    df_order.to_sql('order_table_of'+dealer_name,  con =engine, if_exists='replace')
+    print(df_order)
     print('saved succecefull..!!')
 
-    return render (request, 'sales/index.html')
+    json_records_p = df_order.reset_index().to_json(orient ='records')
+    data_pu = []
+    data_pu = json.loads(json_records_p)
+
+    context = {
+        'd': data_pu, 
+        
+    }
+
+
+    return render (request, 'sales/save.html', context=context)

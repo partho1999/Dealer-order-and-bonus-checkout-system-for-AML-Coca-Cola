@@ -296,10 +296,6 @@
                 var table = document.getElementById('myTable')
                 var tdbody = document.getElementById('tbody')
                 
-
-                //var new_tbody = document.createElement('tbody');
-                //populate_with_new_rows(new_tbody);
-                //old_tbody.parentNode.replaceChild(new_tbody, old_tbody)
                 tdbody.innerHTML = "";
 
                 for(var i=0; i<data.length; i++){
@@ -307,7 +303,7 @@
                         "</td><td>" + data[i].p_name + 
                         "</td><td>" + data[i].UOM + 
                         "</td><td>" + data[i].tp + 
-                        "</td><td style='width: 85px;''><input type='number'  id='number' class='number'  name="+ data[i].id +" value="+data[i].order_qty+">" +  
+                        "</td><td style='width: 85px;'><input type='number'  id='number' class='number'  name="+ data[i].id +" value="+data[i].order_qty+">" +  
                         "</td><td>" + data[i].bonus_qty + 
                         "</td><td>" + data[i].balance +
                         "</td></tr>"
